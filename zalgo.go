@@ -117,14 +117,19 @@ func NewCorrupter(w io.Writer) *Corrupter {
 // returning the number of bytes written and any error that occurred during
 // the write operation.
 func (z *Corrupter) Write(p []byte) (n int, err error) {
+	var _n int
+	n = z.n
+	defer func() {
+		n = z.n - n
+	}()
 	for _, r := range string(p) {
 		if _, ok := zalgoChars[r]; ok {
 			continue
 		}
 		z.b = z.b[:utf8.RuneLen(r)]
 		utf8.EncodeRune(z.b, r)
-		n, err = z.w.Write(z.b)
-		z.n += n
+		_n, err = z.w.Write(z.b)
+		z.n += _n
 		if err != nil {
 			return
 		}
@@ -133,8 +138,8 @@ func (z *Corrupter) Write(p []byte) (n int, err error) {
 		}
 		for i := real(z.Up); i > 0; i-- {
 			if rand.Float64() < imag(z.Up) {
-				n, err = fmt.Fprintf(z.w, "%c", up[rand.Intn(len(up))])
-				z.n += n
+				_n, err = fmt.Fprintf(z.w, "%c", up[rand.Intn(len(up))])
+				z.n += _n
 				if err != nil {
 					return
 				}
@@ -142,8 +147,8 @@ func (z *Corrupter) Write(p []byte) (n int, err error) {
 		}
 		for i := real(z.Middle); i > 0; i-- {
 			if rand.Float64() < imag(z.Middle) {
-				n, err = fmt.Fprintf(z.w, "%c", middle[rand.Intn(len(middle))])
-				z.n += n
+				_n, err = fmt.Fprintf(z.w, "%c", middle[rand.Intn(len(middle))])
+				z.n += _n
 				if err != nil {
 					return
 				}
@@ -151,8 +156,8 @@ func (z *Corrupter) Write(p []byte) (n int, err error) {
 		}
 		for i := real(z.Down); i > 0; i-- {
 			if rand.Float64() < imag(z.Down) {
-				n, err = fmt.Fprintf(z.w, "%c", down[rand.Intn(len(down))])
-				z.n += n
+				_n, err = fmt.Fprintf(z.w, "%c", down[rand.Intn(len(down))])
+				z.n += _n
 				if err != nil {
 					return
 				}
