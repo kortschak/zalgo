@@ -3,12 +3,25 @@
 // license that can be found in the LICENSE file.
 
 // Package zalgo implements a zalgo text io.Writer.
+//
+// In addition to providing the basic Zalgo text transformation, two default
+// transformers are provided:
+//  Corruption - writes to os.Stdout
+//  Perdition  - writes to os.Stderr
+// These defaults are set with what are reasonable defaults (whatever that might
+// mean in this context).
+//
+// So for example:
+//	fmt.Fprintln(zalgo.Corruption, "ZALGO!")
+// will print something like the following to stdout:
+//  Z̗̻̭̫A̝̼̼̯ͩͅL̠͍̮̝ͪG͓͚̣͙͈ͪO͕̍ͨ!̭̒
 package zalgo
 
 import (
 	"fmt"
 	"io"
 	"math/rand"
+	"os"
 	"unicode/utf8"
 )
 
@@ -65,6 +78,21 @@ var (
 		return zc
 	}
 )
+
+var (
+	Corruption = NewCorrupter(os.Stdout)
+	Perdition  = NewCorrupter(os.Stderr)
+)
+
+func init() {
+	Corruption.Up = complex(2, 0.3)
+	Corruption.Middle = complex(1, 0.1)
+	Corruption.Down = complex(5, 0.7)
+
+	Perdition.Up = complex(2, 0.3)
+	Perdition.Middle = complex(1, 0.1)
+	Perdition.Down = complex(5, 0.7)
+}
 
 // Zalgo alters a Corrupter based in the number of bytes written by the Corrupter.
 type Zalgo func(int, *Corrupter)
