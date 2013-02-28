@@ -76,7 +76,7 @@ var (
 			zc[z] = struct{}{}
 		}
 		return zc
-	}
+	}()
 )
 
 var (
@@ -118,6 +118,9 @@ func NewCorrupter(w io.Writer) *Corrupter {
 // the write operation.
 func (z *Corrupter) Write(p []byte) (n int, err error) {
 	for _, r := range string(p) {
+		if _, ok := zalgoChars[r]; ok {
+			continue
+		}
 		z.b = z.b[:utf8.RuneLen(r)]
 		utf8.EncodeRune(z.b, r)
 		n, err = z.w.Write(z.b)
