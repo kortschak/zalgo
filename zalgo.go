@@ -22,6 +22,7 @@ import (
 	"io"
 	"math/rand"
 	"os"
+	"time"
 	"unicode/utf8"
 )
 
@@ -84,6 +85,8 @@ var (
 	Perdition  = NewCorrupter(os.Stderr)
 )
 
+var rnd *rand.Rand
+
 func init() {
 	Corruption.Up = complex(2, 0.3)
 	Corruption.Middle = complex(1, 0.1)
@@ -92,6 +95,8 @@ func init() {
 	Perdition.Up = complex(2, 0.3)
 	Perdition.Middle = complex(1, 0.1)
 	Perdition.Down = complex(5, 0.7)
+
+	rnd = rand.New(rand.NewSource(time.Now().Unix()))
 }
 
 // Zalgo alters a Corrupter based in the number of bytes written by the Corrupter.
@@ -137,8 +142,8 @@ func (z *Corrupter) Write(p []byte) (n int, err error) {
 			z.Zalgo(z.n, z)
 		}
 		for i := real(z.Up); i > 0; i-- {
-			if rand.Float64() < imag(z.Up) {
-				_n, err = fmt.Fprintf(z.w, "%c", up[rand.Intn(len(up))])
+			if rnd.Float64() < imag(z.Up) {
+				_n, err = fmt.Fprintf(z.w, "%c", up[rnd.Intn(len(up))])
 				z.n += _n
 				if err != nil {
 					return
@@ -146,8 +151,8 @@ func (z *Corrupter) Write(p []byte) (n int, err error) {
 			}
 		}
 		for i := real(z.Middle); i > 0; i-- {
-			if rand.Float64() < imag(z.Middle) {
-				_n, err = fmt.Fprintf(z.w, "%c", middle[rand.Intn(len(middle))])
+			if rnd.Float64() < imag(z.Middle) {
+				_n, err = fmt.Fprintf(z.w, "%c", middle[rnd.Intn(len(middle))])
 				z.n += _n
 				if err != nil {
 					return
@@ -155,8 +160,8 @@ func (z *Corrupter) Write(p []byte) (n int, err error) {
 			}
 		}
 		for i := real(z.Down); i > 0; i-- {
-			if rand.Float64() < imag(z.Down) {
-				_n, err = fmt.Fprintf(z.w, "%c", down[rand.Intn(len(down))])
+			if rnd.Float64() < imag(z.Down) {
+				_n, err = fmt.Fprintf(z.w, "%c", down[rnd.Intn(len(down))])
 				z.n += _n
 				if err != nil {
 					return
