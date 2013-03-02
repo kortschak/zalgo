@@ -18,6 +18,10 @@
 package zalgo
 
 import (
+	"bytes"
+	"code.google.com/p/g.net/html"
+	"encoding/xml"
+	"errors"
 	"fmt"
 	"io"
 	"math/rand"
@@ -122,6 +126,33 @@ func NewCorrupter(w io.Writer) *Corrupter {
 // returning the number of bytes written and any error that occurred during
 // the write operation.
 func (z *Corrupter) Write(p []byte) (n int, err error) {
+	x := xml.NewDecoder(bytes.NewReader(p))
+	_, err = x.Token()
+	if err == nil {
+		err = x.Skip()
+	}
+	if err == nil {
+		return 0, errors.New("zalgo: cannot consume XML")
+	}
+
+	h := html.NewTokenizer(bytes.NewReader(p))
+	var f bool
+L:
+	for {
+		t := h.Next()
+		switch t {
+		case html.ErrorToken:
+			if h.Err() == io.EOF {
+				break L
+			}
+		case html.StartTagToken, html.EndTagToken, html.SelfClosingTagToken, html.DoctypeToken:
+			f = true
+		}
+	}
+	if f {
+		return 0, errors.New("zalgo: cannot consume HTML")
+	}
+
 	var _n int
 	n = z.n
 	defer func() {
