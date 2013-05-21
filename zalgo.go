@@ -19,7 +19,7 @@ package zalgo
 
 import (
 	"bytes"
-	"code.google.com/p/g.net/html"
+	"code.google.com/p/go.net/html"
 	"encoding/xml"
 	"errors"
 	"fmt"
