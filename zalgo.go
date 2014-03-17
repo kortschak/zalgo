@@ -103,8 +103,9 @@ func init() {
 	rnd = rand.New(rand.NewSource(time.Now().Unix()))
 }
 
-// Zalgo alters a Corrupter based in the number of bytes written by the Corrupter.
-type Zalgo func(int, *Corrupter)
+// Zalgo alters a Corrupter based in the number of bytes written by the Corrupter
+// and the current rune. If Zalgo chooses, the rune is spared.
+type Zalgo func(int, rune, *Corrupter) (chosen bool)
 
 // Corrupter implements io.Writer transforming plain text to zalgo text.
 type Corrupter struct {
@@ -169,8 +170,8 @@ L:
 		if err != nil {
 			return
 		}
-		if z.Zalgo != nil {
-			z.Zalgo(z.n, z)
+		if z.Zalgo != nil && z.Zalgo(z.n, r, z) {
+			continue
 		}
 		for i := real(z.Up); i > 0; i-- {
 			if rnd.Float64() < imag(z.Up) {

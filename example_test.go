@@ -26,10 +26,11 @@ ZALGO!
 func Example_1() {
 	z := zalgo.NewCorrupter(os.Stdout)
 
-	z.Zalgo = func(n int, z *zalgo.Corrupter) {
+	z.Zalgo = func(n int, r rune, z *zalgo.Corrupter) bool {
 		z.Up += 0.1
 		z.Middle += complex(0.01, 0.01)
 		z.Down += complex(real(z.Down)*0.1, 0)
+		return false
 	}
 
 	z.Up = complex(0, 0.2)
