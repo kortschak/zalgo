@@ -19,10 +19,10 @@ package zalgo
 
 import (
 	"bytes"
-	"code.google.com/p/go.net/html"
 	"encoding/xml"
 	"errors"
 	"fmt"
+	"golang.org/x/net/html"
 	"io"
 	"math/rand"
 	"os"
