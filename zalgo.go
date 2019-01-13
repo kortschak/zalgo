@@ -147,7 +147,7 @@ L:
 			if h.Err() == io.EOF {
 				break L
 			}
-		case html.StartTagToken, html.EndTagToken, html.SelfClosingTagToken, html.DoctypeToken:
+		case html.StartTagToken, html.EndTagToken, html.SelfClosingTagToken, html.DoctypeToken, html.CommentToken:
 			f = true
 		}
 	}
