@@ -22,12 +22,13 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"golang.org/x/net/html"
 	"io"
 	"math/rand"
 	"os"
 	"time"
 	"unicode/utf8"
+
+	"golang.org/x/net/html"
 )
 
 var (
